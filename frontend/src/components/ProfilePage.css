@@ -1,0 +1,26 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 16px;
+  background: var(--pc-bg);
+  min-height: 100%;
+}
+
+.profile-heading {
+  align-self: flex-start;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pc-text-primary);
+}
+
+.profile-note {
+  max-width: 320px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--pc-text-primary);
+  line-height: 1.5;
+}

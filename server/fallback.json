@@ -1,0 +1,12 @@
+{
+  "users": [],
+  "bookings": [],
+  "seats": [],
+  "heartbeats": {},
+  "sessions": [],
+  "books": [
+    { "id": "seed-1", "title": "Introduction to Algorithms", "author": "Cormen et al.", "copies_total": 3, "copies_available": 2 },
+    { "id": "seed-2", "title": "Clean Code", "author": "Robert C. Martin", "copies_total": 2, "copies_available": 1 },
+    { "id": "seed-3", "title": "Design Patterns", "author": "Gang of Four", "copies_total": 2, "copies_available": 0 }
+  ]
+}

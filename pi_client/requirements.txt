@@ -1,0 +1,11 @@
+flask
+flask-cors
+requests
+opencv-python
+numpy
+ultralytics
+Pillow
+# On the Pi only (leave commented out for laptop testing):
+# picamera2
+# RPi.GPIO
+# st7735
