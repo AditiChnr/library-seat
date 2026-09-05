@@ -52,16 +52,14 @@ def book_seat(user_id, seat_id, date_str, time_slot):
     return {"ok": True, "booking": booking}, 200
 
 
-def checkin(user_id, seat_code, date_str):
+def checkin(user_id, seat_code, date_str, time_slot=None):
     """seat_code can be a seat_id (from QR) or a manually typed unique code —
-    for now the unique code IS the seat_id, printed at each seat. Matches
-    on seat + date only (not the exact time text), so it works regardless
-    of the custom from/to time the student picked when booking."""
+    for now the unique code IS the seat_id, printed at each seat."""
     seat_id = (seat_code or "").strip().upper()
-    booking = db.find_active_booking_for_seat(seat_id, date_str)
+    booking = db.find_active_booking_for_seat(seat_id, date_str, time_slot)
 
     if not booking:
-        return {"error": "No booking found for this seat today"}, 404
+        return {"error": "No booking found for this seat at this time"}, 404
     if booking["user_id"] != user_id:
         return {"error": "This seat is booked by someone else"}, 403
     if booking["status"] == "checked_in":
@@ -72,17 +70,17 @@ def checkin(user_id, seat_code, date_str):
     return {"ok": True, "booking": booking}, 200
 
 
-def get_active_booking_for_seat(seat_id, date_str):
+def get_active_booking_for_seat(seat_id, date_str, time_slot=None):
     """Used by the Pi client to know which user (if any) it should be
     attributing the current study session to."""
-    booking = db.find_active_booking_for_seat(seat_id, date_str)
+    booking = db.find_active_booking_for_seat(seat_id, date_str, time_slot)
     if booking and booking["status"] == "checked_in":
         return booking
     return None
 
 
-def checkout(seat_id, date_str):
-    booking = db.find_active_booking_for_seat(seat_id, date_str)
+def checkout(seat_id, date_str, time_slot=None):
+    booking = db.find_active_booking_for_seat(seat_id, date_str, time_slot)
     if booking and booking["status"] == "checked_in":
         db.update_booking(booking["id"], {"status": "completed"})
     return {"ok": True}
