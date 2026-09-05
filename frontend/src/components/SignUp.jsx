@@ -8,6 +8,14 @@ export default function SignUp({ onSignedUp, onSwitchToLogin }) {
   const [password, setPassword] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
+
+  // Student details — collected up front so the profile card is filled in
+  // from the moment the account is created.
+  const [name, setName] = useState('')
+  const [semester, setSemester] = useState('')
+  const [branch, setBranch] = useState('')
+  const [uniqueId, setUniqueId] = useState('')
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -17,9 +25,19 @@ export default function SignUp({ onSignedUp, onSwitchToLogin }) {
       setError('Code, username and password are required')
       return
     }
+    if (role === 'student' && (!name || !uniqueId)) {
+      setError('Name and college unique ID are required')
+      return
+    }
     setLoading(true)
     try {
-      const res = await api.post('/auth/signup', { role, code, username, password, phone, email })
+      const res = await api.post('/auth/signup', {
+        role, code, username, password, phone, email,
+        name,
+        semester,
+        branch,
+        unique_id: uniqueId
+      })
       onSignedUp(res.data.user)
     } catch (err) {
       setError(err.response?.data?.error || 'Sign up failed')
@@ -31,7 +49,8 @@ export default function SignUp({ onSignedUp, onSwitchToLogin }) {
   return (
     <div style={{
       minHeight: '100vh', background: 'var(--bg)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center'
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '32px 16px'
     }}>
       <div className="card" style={{ width: 400, padding: '36px 40px' }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
@@ -49,12 +68,30 @@ export default function SignUp({ onSignedUp, onSwitchToLogin }) {
         <Field label="Code" value={code} onChange={setCode} placeholder="Invite code for your role" />
         <Field label="Username" value={username} onChange={setUsername} />
         <Field label="Password" value={password} onChange={setPassword} type="password" />
+
+        {role === 'student' && (
+          <>
+            <Divider label="Student details" />
+            <Field label="Full name" value={name} onChange={setName} placeholder="As on your college ID" />
+            <div style={{ display: 'flex', gap: 10 }}>
+              <div style={{ flex: 1 }}>
+                <Field label="Semester" value={semester} onChange={setSemester} placeholder="e.g. 3" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <Field label="Branch" value={branch} onChange={setBranch} placeholder="e.g. CSE" />
+              </div>
+            </div>
+            <Field label="College unique ID" value={uniqueId} onChange={setUniqueId} placeholder="e.g. 2GI25CS009" />
+            <Divider label="Contact" />
+          </>
+        )}
+
         <Field label="Phone no." value={phone} onChange={setPhone} placeholder="For password reset" />
         <Field label="Email" value={email} onChange={setEmail} placeholder="For account recovery" />
 
         {error && (
           <div style={{
-            background: 'rgba(231,76,60,0.12)', border: '1px solid var(--danger)',
+            background: 'rgba(168,56,61,0.14)', border: '1px solid var(--danger)',
             color: 'var(--danger)', borderRadius: 8, padding: '10px 14px',
             fontSize: 13, marginBottom: 16
           }}>{error}</div>
@@ -71,6 +108,20 @@ export default function SignUp({ onSignedUp, onSwitchToLogin }) {
           </span>
         </div>
       </div>
+    </div>
+  )
+}
+
+function Divider({ label }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 10,
+      margin: '18px 0 12px', fontSize: 11, letterSpacing: 0.6,
+      textTransform: 'uppercase', color: 'var(--text-muted)'
+    }}>
+      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} />
+      {label}
+      <span style={{ flex: 1, height: 1, background: 'var(--border)' }} />
     </div>
   )
 }
